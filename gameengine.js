@@ -18,7 +18,11 @@ class GameEngine {
         // Information on the input
         this.click = null;
         this.mouse = null;
-        this.wheel = null;
+
+        this.up = null;
+        this.down = null;
+        this.left = null;
+        this.right = null;
 
         // THE KILL SWITCH
         this.running = false;
@@ -31,7 +35,7 @@ class GameEngine {
             },
             debugging: false,
         };
-    };
+    }
 
     init(ctx) {
         this.ctx = ctx;
@@ -39,7 +43,7 @@ class GameEngine {
         this.surfaceHeight = this.ctx.canvas.height;
         this.startInput();
         this.timer = new Timer();
-    };
+    }
 
     start() {
         this.running = true;
@@ -50,29 +54,29 @@ class GameEngine {
             }
         };
         gameLoop();
-    };
+    }
 
     startInput() {
-        const getXandY = e => ({
+        const getXandY = (e) => ({
             x: e.clientX - this.ctx.canvas.getBoundingClientRect().left,
-            y: e.clientY - this.ctx.canvas.getBoundingClientRect().top
+            y: e.clientY - this.ctx.canvas.getBoundingClientRect().top,
         });
 
-        this.ctx.canvas.addEventListener("mousemove", e => {
+        this.ctx.canvas.addEventListener("mousemove", (e) => {
             if (this.options.debugging) {
                 console.log("MOUSE_MOVE", getXandY(e));
             }
             this.mouse = getXandY(e);
         });
 
-        this.ctx.canvas.addEventListener("click", e => {
+        this.ctx.canvas.addEventListener("click", (e) => {
             if (this.options.debugging) {
                 console.log("CLICK", getXandY(e));
             }
             this.click = getXandY(e);
         });
 
-        this.ctx.canvas.addEventListener("wheel", e => {
+        this.ctx.canvas.addEventListener("wheel", (e) => {
             if (this.options.debugging) {
                 console.log("WHEEL", getXandY(e), e.wheelDelta);
             }
@@ -82,7 +86,7 @@ class GameEngine {
             this.wheel = e;
         });
 
-        this.ctx.canvas.addEventListener("contextmenu", e => {
+        this.ctx.canvas.addEventListener("contextmenu", (e) => {
             if (this.options.debugging) {
                 console.log("RIGHT_CLICK", getXandY(e));
             }
@@ -91,41 +95,40 @@ class GameEngine {
             }
             this.rightclick = getXandY(e);
         });
-    };
+    }
 
     addEntity(entity) {
         this.entitiesToAdd.push(entity);
-    };
+    }
 
     draw() {
         // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
         // Draw latest things first
         for (let i = this.entities.length - 1; i >= 0; i--) {
             this.entities[i].draw(this.ctx, this);
         }
-    };
+    }
 
     update() {
         // Update Entities
-        this.entities.forEach(entity => entity.update(this));
+        this.entities.forEach((entity) => entity.update(this));
 
         // Remove dead things
-        this.entities = this.entities.filter(entity => !entity.removeFromWorld);
+        this.entities = this.entities.filter((entity) => !entity.removeFromWorld);
 
         // Add new things
         this.entities = this.entities.concat(this.entitiesToAdd);
         this.entitiesToAdd = [];
-    };
+    }
 
     loop() {
         this.clockTick = this.timer.tick();
         this.update();
         this.draw();
-    };
+    }
 
-    get["deltaTime"]() { return this.clockTick; }
-};
-
-// KV Le was here :)
+    get ["deltaTime"]() {
+        return this.clockTick;
+    }
+}
