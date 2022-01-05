@@ -9,8 +9,8 @@ ASSET_MANAGER.downloadAll(() => {
     ctx.imageSmoothingEnabled = false;
 
     // add entities
-    engine.addEntity(new StormHead(engine, 1024 / 2, 768 / 2));
-    //engine.addEntity(new HUD(engine));
+    engine.addEntity(new StormHead(engine));
+    engine.addEntity(new TextOverlay(engine));
 
     // initialize and start engine
     engine.init(ctx);
