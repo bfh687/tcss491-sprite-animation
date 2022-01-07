@@ -6,10 +6,6 @@ class GameEngine {
         // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
         this.ctx = null;
 
-        // Context dimensions
-        this.surfaceWidth = null;
-        this.surfaceHeight = null;
-
         // Everything that will be updated and drawn each frame
         this.entities = [];
         // Entities to be added at the end of each update
@@ -18,11 +14,7 @@ class GameEngine {
         // Information on the input
         this.click = null;
         this.mouse = null;
-
-        this.up = null;
-        this.down = null;
-        this.left = null;
-        this.right = null;
+        this.keys = {};
 
         // THE KILL SWITCH
         this.running = false;
@@ -39,8 +31,6 @@ class GameEngine {
 
     init(ctx) {
         this.ctx = ctx;
-        this.surfaceWidth = this.ctx.canvas.width;
-        this.surfaceHeight = this.ctx.canvas.height;
         this.startInput();
         this.timer = new Timer();
     }
@@ -62,6 +52,11 @@ class GameEngine {
             y: e.clientY - this.ctx.canvas.getBoundingClientRect().top,
         });
 
+        // key listeners
+        window.addEventListener("keydown", (e) => (this.keys[e.key] = true));
+        window.addEventListener("keyup", (e) => (this.keys[e.key] = false));
+
+        // mouse listneers
         this.ctx.canvas.addEventListener("mousemove", (e) => {
             if (this.options.debugging) {
                 console.log("MOUSE_MOVE", getXandY(e));
@@ -74,26 +69,6 @@ class GameEngine {
                 console.log("CLICK", getXandY(e));
             }
             this.click = getXandY(e);
-        });
-
-        this.ctx.canvas.addEventListener("wheel", (e) => {
-            if (this.options.debugging) {
-                console.log("WHEEL", getXandY(e), e.wheelDelta);
-            }
-            if (this.options.prevent.scrolling) {
-                e.preventDefault(); // Prevent Scrolling
-            }
-            this.wheel = e;
-        });
-
-        this.ctx.canvas.addEventListener("contextmenu", (e) => {
-            if (this.options.debugging) {
-                console.log("RIGHT_CLICK", getXandY(e));
-            }
-            if (this.options.prevent.contextMenu) {
-                e.preventDefault(); // Prevent Context Menu
-            }
-            this.rightclick = getXandY(e);
         });
     }
 
@@ -130,5 +105,13 @@ class GameEngine {
 
     get ["deltaTime"]() {
         return this.clockTick;
+    }
+
+    get ["width"]() {
+        return this.ctx?.canvas?.width || 0;
+    }
+
+    get ["height"]() {
+        return this.ctx?.canvas?.height || 0;
     }
 }
